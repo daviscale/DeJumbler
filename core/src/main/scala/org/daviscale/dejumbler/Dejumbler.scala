@@ -10,6 +10,7 @@ object Dejumbler {
     Source.fromResource("american-english-insane")
       .getLines
       .toSeq
+      .filter(_.length > 1)
 
   def getPermutations(word: String): Seq[String] = {
     word
@@ -17,7 +18,12 @@ object Dejumbler {
       .toSeq
       .permutations
       .toSeq
-      .map(charSeq => charSeq.foldLeft[String]("")((acc, char) => acc + char.toString))
+      .map(charSeq => charSeqToString(charSeq))
+  }
+
+  def charSeqToString(chars: Seq[Char]): String = {
+    chars
+      .foldLeft[String]("")((acc, char) => acc + char.toString)
   }
 
   def findCandidates(word: String)(implicit executionContext: ExecutionContext = ExecutionContext.global): Seq[String] = {
