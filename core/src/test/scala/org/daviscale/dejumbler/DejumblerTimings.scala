@@ -46,7 +46,7 @@ object DejumblerTimings {
     println(s"Scrambled Words: ${scrambledWords.mkString(", ")}")
     implicit val executionContext = ExecutionContext.global
     val timingFutures = scrambledWords.map(getDejumbleTime)
-    val timings = Await.result(Future.sequence(timingFutures), 10.minutes)
+    val timings = Await.result(Future.sequence(timingFutures), 10.minutes).sorted
     println(s"For sample size of $numberWords")
     println(s"Average: ${average(timings)}")
     println(s"Min: ${timings.head}")
