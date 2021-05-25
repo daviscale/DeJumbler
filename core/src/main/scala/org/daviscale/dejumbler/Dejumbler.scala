@@ -26,6 +26,14 @@ object Dejumbler {
       .foldLeft[String]("")((acc, char) => acc + char.toString)
   }
 
+  // This is only used by DejumblerTimings as it's difficult to time things when
+  // futures are involved
+  def findCandidatesSync(word: String): Seq[String] = {
+    getPermutations(word) flatMap { perm =>
+      wordList.find(_.equalsIgnoreCase(perm))
+    }
+  }
+
   def findCandidates(
     word: String
   )(
