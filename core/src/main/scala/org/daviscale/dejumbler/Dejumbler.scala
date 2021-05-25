@@ -10,7 +10,8 @@ object Dejumbler {
     Source.fromResource("american-english-insane")
       .getLines
       .toSeq
-      .filter(_.length > 1)
+      .filter(_.length > 2)
+      .filterNot(_.contains("'"))
 
   def getPermutations(word: String): Seq[String] = {
     word
@@ -24,14 +25,6 @@ object Dejumbler {
   def charSeqToString(chars: Seq[Char]): String = {
     chars
       .foldLeft[String]("")((acc, char) => acc + char.toString)
-  }
-
-  // This is only used by DejumblerTimings as it's difficult to time things when
-  // futures are involved
-  def findCandidatesSync(word: String): Seq[String] = {
-    getPermutations(word) flatMap { perm =>
-      wordList.find(_.equalsIgnoreCase(perm))
-    }
   }
 
   def findCandidates(

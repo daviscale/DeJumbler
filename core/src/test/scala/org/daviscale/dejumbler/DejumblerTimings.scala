@@ -1,7 +1,7 @@
 package org.daviscale.dejumbler
 
-import java.util.concurrent.Executors
-
+import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.duration._
 import scala.util.Random
 import scala.util.chaining._
 
@@ -10,14 +10,16 @@ object DejumblerTimings {
   import Dejumbler._
 
   def getScrambledWords(numberWords: Int): Seq[String] = {
-    val wordListSize = wordList.size
+    // jumble puzzles usually consists of words that are 7 letters or less
+    val filteredWordList = wordList.filter(_.length <= 7)
+    val wordListSize = filteredWordList.size
     def randomIndex(): Int = {
       Random.between(0, wordListSize)
     }
 
     (1 to numberWords)
       .map { _ =>
-        val word = wordList(randomIndex())
+        val word = filteredWordList(randomIndex())
         Random
           .shuffle(word.toCharArray)
           .toSeq
@@ -27,16 +29,24 @@ object DejumblerTimings {
 
   def getDejumbleTime(
     scrambledWord: String
-  ): Long = {
-     val start = System.currentTimeMillis
-     findCandidatesSync(scrambledWord)
-     System.currentTimeMillis - start
+  )(
+    implicit executionContext: ExecutionContext
+  ): Future[Long] = {
+    for {
+      start <- Future { System.currentTimeMillis }
+      _ <- findCandidates(scrambledWord)
+    } yield {
+      System.currentTimeMillis - start
+    }
   }
 
   def main(args: Array[String]): Unit = {
     val numberWords = args.head.toInt
     val scrambledWords = getScrambledWords(numberWords)
-    val timings = scrambledWords.map(getDejumbleTime)
+    println(s"Scrambled Words: ${scrambledWords.mkString(", ")}")
+    implicit val executionContext = ExecutionContext.global
+    val timingFutures = scrambledWords.map(getDejumbleTime)
+    val timings = Await.result(Future.sequence(timingFutures), 10.minutes)
     println(s"For sample size of $numberWords")
     println(s"Average: ${average(timings)}")
     println(s"Min: ${timings.head}")
