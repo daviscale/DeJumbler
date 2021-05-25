@@ -6,12 +6,14 @@ import scala.io.Source
 
 object Dejumbler {
 
+  val charsToExclude = Set('\'', 'è')
+
   lazy val wordList: Seq[String] =
     Source.fromResource("american-english-insane")
       .getLines
       .toSeq
       .filter(_.length > 2)
-      .filterNot(_.contains("'"))
+      .filterNot(word => charsToExclude.exists(word.contains(_)))
 
   def getPermutations(word: String): Seq[String] = {
     word
