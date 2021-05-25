@@ -1,7 +1,7 @@
 package org.daviscale.dejumbler
 
-import scala.concurrent.Await
-import scala.concurrent.duration._
+import java.util.concurrent.Executors
+
 import scala.util.Random
 import scala.util.chaining._
 
@@ -25,17 +25,18 @@ object DejumblerTimings {
       }
   }
 
-  def getDejumbleTime(scrambledWord: String): Long = {
-    val start = System.nanoTime
-    Await.result(findCandidates(scrambledWord), 1.minute)
-    val finish = System.nanoTime
-    finish - start
+  def getDejumbleTime(
+    scrambledWord: String
+  ): Long = {
+     val start = System.currentTimeMillis
+     findCandidatesSync(scrambledWord)
+     System.currentTimeMillis - start
   }
 
   def main(args: Array[String]): Unit = {
     val numberWords = args.head.toInt
     val scrambledWords = getScrambledWords(numberWords)
-    val timings = scrambledWords.map(getDejumbleTime).sorted
+    val timings = scrambledWords.map(getDejumbleTime)
     println(s"For sample size of $numberWords")
     println(s"Average: ${average(timings)}")
     println(s"Min: ${timings.head}")
