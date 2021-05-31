@@ -12,7 +12,7 @@ object Dejumbler {
     Source.fromResource("american-english-insane")
       .getLines
       .toSeq
-      .filter(_.length > 2)
+      .filter(word => word.length >= 4 && word.length <= 6)
       .filterNot(word => charsToExclude.exists(word.contains(_)))
 
   def getPermutations(word: String): Seq[String] = {
