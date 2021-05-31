@@ -30,6 +30,8 @@ object Dejumbler {
   }
 
   def findCandidates(
+    findFn: (Seq[String], String) => Seq[String]
+  )(
     word: String
   )(
     implicit executionContext: ExecutionContext = ExecutionContext.global
@@ -37,7 +39,7 @@ object Dejumbler {
     val futures: Seq[Future[Seq[String]]] = getPermutations(word)
       .map { perm =>
         Future {
-          wordList.find(_.equalsIgnoreCase(perm)).toSeq
+          findFn(wordList, perm)
         }
       }
     Future

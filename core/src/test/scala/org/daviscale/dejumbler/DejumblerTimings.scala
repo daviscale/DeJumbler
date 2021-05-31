@@ -28,13 +28,16 @@ object DejumblerTimings {
   }
 
   def getDejumbleTime(
+    findFn: (Seq[String], String) => Seq[String]
+  )(
     scrambledWord: String
   )(
     implicit executionContext: ExecutionContext
   ): Future[Long] = {
+    val find = findCandidates(findFn) _
     for {
       start <- Future { System.currentTimeMillis }
-      _ <- findCandidates(scrambledWord)
+      _ <- find(scrambledWord)
     } yield {
       System.currentTimeMillis - start
     }
@@ -45,7 +48,7 @@ object DejumblerTimings {
     val scrambledWords = getScrambledWords(numberWords)
     println(s"Scrambled Words: ${scrambledWords.mkString(", ")}")
     implicit val executionContext = ExecutionContext.global
-    val timingFutures = scrambledWords.map(getDejumbleTime)
+    val timingFutures = scrambledWords.map(getDejumbleTime((wordList, perm) => wordList.find(_.equalsIgnoreCase(perm)).toSeq))
     val timings = Await.result(Future.sequence(timingFutures), 10.minutes).sorted
     println(s"For sample size of $numberWords")
     println(s"Average: ${average(timings)}")
