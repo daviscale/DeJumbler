@@ -1,3 +1,4 @@
 target/
 .bsp/
 core/src/main/resources/american-english-insane
+.idea/
