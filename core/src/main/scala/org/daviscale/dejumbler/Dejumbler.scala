@@ -1,7 +1,6 @@
 package org.daviscale.dejumbler
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.concurrent.duration._
 import scala.io.Source
 
 object Dejumbler {
