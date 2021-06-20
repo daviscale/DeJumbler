@@ -10,8 +10,8 @@ object DejumblerTimings {
   import Dejumbler._
 
   def getScrambledWords(numberWords: Int): Seq[String] = {
-    // jumble puzzles usually consists of words that are 7 letters or less
-    val filteredWordList = wordList.filter(_.length <= 7)
+    // jumble puzzles usually consists of words that are between 4 and 6 letters
+    val filteredWordList = wordList.filter(word => word.length <= 4 || word.length <= 6)
     val wordListSize = filteredWordList.size
     def randomIndex(): Int = {
       Random.between(0, wordListSize)
