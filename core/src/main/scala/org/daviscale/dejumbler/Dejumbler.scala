@@ -45,4 +45,16 @@ object Dejumbler {
       .sequence(futures)
       .map(_.flatten)
   }
+
+  /**
+   *  An implementation of findCandidates that takes a permutation and searches thru every element
+   *  of the word list with Seq.find until a match is found
+   */
+  def findCandidatesBruteForce(
+    word: String
+  )(
+    implicit executionContext: ExecutionContext = ExecutionContext.global
+  ): Future[Seq[String]] = {
+    findCandidates((wordList, perm) => wordList.find(_.equalsIgnoreCase(perm)).toSeq)(word)(executionContext)
+  }
 }
