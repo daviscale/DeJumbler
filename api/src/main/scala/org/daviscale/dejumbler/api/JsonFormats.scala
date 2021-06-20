@@ -3,7 +3,7 @@ package org.daviscale.dejumbler.api
 import spray.json.DefaultJsonProtocol._
 import spray.json.PrettyPrinter
 
-case class DejumbleResponse(candidates: Seq[String])
+case class DejumbleResponse(words: Seq[String])
 
 object JsonFormats {
   implicit val printer = PrettyPrinter
