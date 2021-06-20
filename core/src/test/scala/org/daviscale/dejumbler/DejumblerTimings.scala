@@ -17,7 +17,7 @@ object DejumblerTimings {
 
     (1 to numberWords)
       .map { _ =>
-        val word = filteredWordList(randomIndex())
+        val word = wordList(randomIndex())
         Random
           .shuffle(word.toCharArray)
           .toSeq
@@ -45,7 +45,7 @@ object DejumblerTimings {
     val numberWords = args.head.toInt
     val scrambledWords = getScrambledWords(numberWords)
     println(s"Scrambled Words: ${scrambledWords.mkString(", ")}")
-    implicit val executionContext = ExecutionContext.global
+    implicit val executionContext: ExecutionContext = ExecutionContext.global
     val timingFutures = scrambledWords.map(getDejumbleTime((wordList, perm) => wordList.find(_.equalsIgnoreCase(perm)).toSeq))
     val timings = Await.result(Future.sequence(timingFutures), 10.minutes).sorted
     println(s"For sample size of $numberWords")
@@ -58,7 +58,7 @@ object DejumblerTimings {
   }
 
   def average(timings: Seq[Long]): Long = {
-    val sum = timings.reduce(_ + _)
+    val sum = timings.sum
     sum / timings.size.toLong
   }
 
