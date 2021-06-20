@@ -1,3 +1,4 @@
+
 val versions = new {
   val thisProjectVersion = "0.1.0-SNAPSHOT"
   val coreScalaVersion = "2.13.5"
@@ -24,6 +25,8 @@ lazy val core = (project in file("core"))
 lazy val api = (project in file("api"))
   .settings(
     name := "api",
+    // allows app to be stopped on the sbt console with Crtl-C
+    run / fork := true,
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % versions.scalaTestVersion % "test",
       "org.scalatest" %% "scalatest-flatspec" % versions.scalaTestVersion % "test",
@@ -33,3 +36,5 @@ lazy val api = (project in file("api"))
       "com.typesafe.akka" %% "akka-http-spray-json" % versions.akkaHttpVersion
     )
   )
+  .enablePlugins(JavaAppPackaging)
+  .dependsOn(core)
