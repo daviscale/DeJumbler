@@ -43,7 +43,7 @@ object Dejumbler {
       }
     Future
       .sequence(futures)
-      .map(_.flatten)
+      .map(_.flatten.map(_.toLowerCase))
   }
 
   /**
