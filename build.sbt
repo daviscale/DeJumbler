@@ -27,12 +27,13 @@ lazy val api = (project in file("api"))
     name := "api",
     // allows app to be stopped on the sbt console with Crtl-C
     run / fork := true,
+    docker / buildOptions := BuildOptions(cache = false),
     docker / dockerfile := {
       val appDir: File = stage.value
       val targetDir = "/app"
 
       new Dockerfile {
-        from("adoptopenjdk/openjdk11:alpine-jre")
+        from("adoptopenjdk/openjdk11")
         entryPoint(s"$targetDir/bin/${executableScriptName.value}")
         copy(appDir, targetDir, chown = "daemon:daemon")
       }
