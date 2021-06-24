@@ -27,6 +27,16 @@ lazy val api = (project in file("api"))
     name := "api",
     // allows app to be stopped on the sbt console with Crtl-C
     run / fork := true,
+    docker / dockerfile := {
+      val appDir: File = stage.value
+      val targetDir = "/app"
+
+      new Dockerfile {
+        from("adoptopenjdk/openjdk11:alpine-jre")
+        entryPoint(s"$targetDir/bin/${executableScriptName.value}")
+        copy(appDir, targetDir, chown = "daemon:daemon")
+      }
+    },
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % versions.scalaTestVersion % "test",
       "org.scalatest" %% "scalatest-flatspec" % versions.scalaTestVersion % "test",
@@ -36,5 +46,5 @@ lazy val api = (project in file("api"))
       "com.typesafe.akka" %% "akka-http-spray-json" % versions.akkaHttpVersion
     )
   )
-  .enablePlugins(JavaAppPackaging)
+  .enablePlugins(sbtdocker.DockerPlugin, JavaAppPackaging)
   .dependsOn(core)
